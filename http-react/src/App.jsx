@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-
+//Custom hook
+import { useFetch } from "./hooks/useFetch";
 import "./App.css";
+
+//Refatorando o POST
 
 //URL base da API
 const url = "http://localhost:3001/products";
@@ -9,6 +12,12 @@ function App() {
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  //Refatorando o POST
+  const [config, setConfig] = useState(null);
+  const [method, setMethod] = useState(null);
+  const [callFetch, setCallFetch] = useState(false);
+  //Custom Hook
+  const { data: items } = useFetch(url);
 
   // 1- Resgatando dados da API
   const getData = useCallback(async () => {
@@ -16,11 +25,6 @@ function App() {
     const data = await res.json();
     setProducts(data);
   }, []);
-
-  useEffect(() => {
-    getData();
-  }, [getData]);
-  console.log(products);
 
   // Adicionando Itens na lista de produtos
 
@@ -46,19 +50,23 @@ function App() {
       body: JSON.stringify(product),
     });
 
-    // Atualizando a lista de produtos
-    getData();
+    // Carregamento dinâmico de dados
+    const addedProduct = await res.json();
+    setProducts((prevProducts) => [...prevProducts, addedProduct]);
+    setName("");
+    setPrice("");
   };
 
   return (
     <div className="App">
       <h1>Lista de produtos</h1>
       <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            {product.name} - R$ {product.price}
-          </li>
-        ))}
+        {items &&
+          items.map((product) => (
+            <li key={product.id}>
+              {product.name} - R$ {product.price}
+            </li>
+          ))}
       </ul>
       <div className="form-add-product">
         <h2>Adicionar Produto</h2>

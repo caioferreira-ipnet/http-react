@@ -24,6 +24,16 @@
       "name": "Tenis",
       "price": "109.00",
       "id": "fzw1AMXzVt8"
+    },
+    {
+      "name": "Teclado",
+      "price": "110.00",
+      "id": "z3S0SJTXXFA"
+    },
+    {
+      "name": "Cadeira",
+      "price": "200.00",
+      "id": "5bt05QpUm-E"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
