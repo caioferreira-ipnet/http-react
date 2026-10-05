@@ -12,12 +12,9 @@ function App() {
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  //Refatorando o POST
-  const [config, setConfig] = useState(null);
-  const [method, setMethod] = useState(null);
-  const [callFetch, setCallFetch] = useState(false);
+
   //Custom Hook
-  const { data: items } = useFetch(url);
+  const { data: items, httpConfig } = useFetch(url);
 
   // 1- Resgatando dados da API
   const getData = useCallback(async () => {
@@ -42,17 +39,9 @@ function App() {
   }
 
   const addProduct = async (product) => {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(product),
-    });
+    //Refatorando POST
+    httpConfig(product, "POST");
 
-    // Carregamento dinâmico de dados
-    const addedProduct = await res.json();
-    setProducts((prevProducts) => [...prevProducts, addedProduct]);
     setName("");
     setPrice("");
   };
