@@ -1,86 +1,82 @@
-import { useState, useEffect, useCallback } from "react";
-//Custom hook
+import { useState } from "react";
 import { useFetch } from "./hooks/useFetch";
 import "./App.css";
 
-//Refatorando o POST
-
-//URL base da API
 const url = "http://localhost:3001/products";
 
 function App() {
-  const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
 
-  //Custom Hook
-  const { data: items, httpConfig } = useFetch(url);
-
-  // 1- Resgatando dados da API
-  const getData = useCallback(async () => {
-    const res = await fetch(url);
-    const data = await res.json();
-    setProducts(data);
-  }, []);
-
-  // Adicionando Itens na lista de produtos
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const name = e.target.name.value;
-    const price = e.target.price.value;
-
-    const product = {
-      name,
-      price,
-    };
-
-    addProduct(product);
-  }
+  const { data: items, httpConfig, loading, errors } = useFetch(url);
 
   const addProduct = async (product) => {
-    //Refatorando POST
     httpConfig(product, "POST");
-
     setName("");
     setPrice("");
   };
 
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (name.trim() === "" || price.trim() === "") {
+      return;
+    } else {
+      const product = {
+        name,
+        price,
+      };
+      // 'void' indica explicitamente que a Promise da função async não precisa ser aguardada aqui
+      void addProduct(product);
+    }
+  }
+
   return (
     <div className="App">
       <h1>Lista de produtos</h1>
-      <ul>
-        {items &&
-          items.map((product) => (
+      {/*Loading data */}
+      {loading && <p>Loading...</p>}
+      {errors && <p>{errors}</p>}
+      {!loading && (
+        <ul>
+          {/* Uso do optional chaining (?.) para eliminar o warning */}
+          {items?.map((product) => (
             <li key={product.id}>
               {product.name} - R$ {product.price}
             </li>
           ))}
-      </ul>
+        </ul>
+      )}
+
       <div className="form-add-product">
         <h2>Adicionar Produto</h2>
         <form onSubmit={handleSubmit}>
+          {/* Formatação dos inputs mantendo o texto e input na mesma linha/bloco sem ambiguidades */}
           <label>
-            Nome:
+            Nome:{""}
             <input
               type="text"
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </label>
           <label>
-            Preço:
+            {/* Formatação dos inputs mantendo o texto e input na mesma linha/bloco sem ambiguidades */}
+            Preço:{""}
             <input
-              type="text"
+              type="number"
               name="price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              required
             />
           </label>
-          <button type="submit" value="Adicionar">
-            Adicionar
-          </button>
+          {/*Loading no POST */}
+          {loading && <input type="submit" value="Aguarde" disabled />}
+
+          {!loading && <input type="submit" value="Criar" />}
         </form>
       </div>
     </div>
