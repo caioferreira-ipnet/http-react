@@ -15,7 +15,7 @@ function App() {
     setName("");
     setPrice("");
   };
-
+  //Função para adicionar produto
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -30,6 +30,10 @@ function App() {
       void addProduct(product);
     }
   }
+  //Funcção de remover
+  function handleRemoveProduct(id) {
+    httpConfig(id, "DELETE");
+  }
 
   return (
     <div className="App">
@@ -43,6 +47,9 @@ function App() {
           {items?.map((product) => (
             <li key={product.id}>
               {product.name} - R$ {product.price}
+              <button onClick={() => handleRemoveProduct(product.id)}>
+                Remover
+              </button>
             </li>
           ))}
         </ul>
