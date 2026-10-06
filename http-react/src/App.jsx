@@ -7,6 +7,7 @@ const url = "http://localhost:3001/products";
 function App() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [count, setCount] = useState(0);
 
   const { data: items, httpConfig, loading, errors } = useFetch(url);
 
@@ -15,6 +16,25 @@ function App() {
     setName("");
     setPrice("");
   };
+  //Função para adicionar produto
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (name.trim() === "" || price.trim() === "") {
+      return;
+    } else {
+      const product = {
+        name,
+        price,
+      };
+      // 'void' indica explicitamente que a Promise da função async não precisa ser aguardada aqui
+      void addProduct(product);
+    }
+  }
+  //Funcção de remover
+  function handleRemoveProduct(id) {
+    httpConfig(id, "DELETE");
+  }
 
   //Função para adicionar produto
   function handleSubmit(e) {

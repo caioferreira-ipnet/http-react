@@ -1,15 +1,26 @@
 import { useState, useEffect } from "react";
 
 export const useFetch = (url) => {
-  const [data, setData] = useState(null);
+  //Refatorando o POST
+  // Vai configurar o metódo que vai ser utilizado, headers, body também
   const [config, setConfig] = useState(null);
+
+  //Vai setar qual método vai ser utilizado na função, se é GET ou POST
   const [method, setMethod] = useState(null);
+
+  //Vai entrar junto do parâmetro do useEffect
+  //Para que ele seja executado quando o método for alterado
   const [callFetch, setCallFetch] = useState(false);
+
+  //Loading
   const [loading, setLoading] = useState(false);
+
+  //Tratando erros
   const [errors, setErrors] = useState(null);
   const [itemsId, setItemsId] = useState(null);
+  const [data, setData] = useState(null);
 
-  // Configura as opções da requisição de acordo com o método
+  //Configurar POST/Requisições gerais
   const httpConfig = (data, method) => {
     if (method === "POST") {
       setConfig({
@@ -32,62 +43,43 @@ export const useFetch = (url) => {
     }
   };
 
-  // 1. Método GET (Executa ao montar ou ao mudar callFetch)
+  //Method GET
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    void (async () => {
       try {
+        setLoading(true);
         const res = await fetch(url);
         const json = await res.json();
         setData(json);
-        setErrors(null);
       } catch (error) {
         console.log(error.message);
         setErrors("Erro ao carregar dados!");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
+    })();
   }, [url, callFetch]);
 
-  // 2. Métodos POST e DELETE
+  //Method POST
   useEffect(() => {
-    const httpRequest = async () => {
-      if (method === "POST") {
+    if (method === "POST") {
+      void (async () => {
         try {
-          setLoading(true);
           const res = await fetch(url, config);
           const json = await res.json();
-          setCallFetch(json); // Dispara atualização da lista
+          setCallFetch(json);
         } catch (error) {
           console.error("Error posting data:", error);
-          setErrors("Erro ao enviar dados!");
-        } finally {
-          setLoading(false);
         }
-      } else if (method === "DELETE") {
-        try {
-          setLoading(true);
-          const deleteUrl = `${url}/${itemsId}`;
-          const res = await fetch(deleteUrl, config);
-          const json = await res.json();
-          setCallFetch(json); // Dispara atualização da lista
-        } catch (error) {
-          console.error("Error deleting data:", error);
-          setErrors("Erro ao remover dados!");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    if (method) {
-      httpRequest();
+      })();
+    } else if (method === "DELETE") {
+      void (async () => {
+        const deleteUrl = `${url}/${itemsId}`;
+        const res = await fetch(deleteUrl, config);
+        const json = await res.json();
+        setCallFetch(json);
+      })();
     }
   }, [config, method, url, itemsId]);
-
-  // Retorno principal do hook (agora fora do httpConfig)
   return { data, httpConfig, loading, errors };
 };
