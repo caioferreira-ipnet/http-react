@@ -12,9 +12,15 @@ function App() {
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [count, setCount] = useState(0);
 
   //Custom Hook
   const { data: items, httpConfig } = useFetch(url);
+  //Teste
+  useEffect(() => {
+    console.log(`O contador mudou para: ${count}`);
+    document.title = `Mensagens (${count})`;
+  }, [count]);
 
   // 1- Resgatando dados da API
   const getData = useCallback(async () => {

@@ -39,6 +39,11 @@
       "name": "Mochila",
       "price": "90.99",
       "id": "VFIwttedK44"
+    },
+    {
+      "name": "Caneta Azul",
+      "price": "10.00",
+      "id": "aUO2Kmae7YM"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
