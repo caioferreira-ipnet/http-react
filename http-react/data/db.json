@@ -1,21 +1,6 @@
 {
   "products": [
     {
-      "id": "1",
-      "name": "Camisa",
-      "price": 10.99
-    },
-    {
-      "id": "2",
-      "name": "Calça",
-      "price": 19.99
-    },
-    {
-      "id": "3",
-      "name": "Bermuda",
-      "price": 5.99
-    },
-    {
       "name": "Bola",
       "price": "19.00",
       "id": "1ipz9sIupl0"

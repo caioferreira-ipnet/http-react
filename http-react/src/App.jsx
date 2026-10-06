@@ -9,36 +9,33 @@ function App() {
   const [price, setPrice] = useState("");
   const [count, setCount] = useState(0);
 
-  //Custom Hook
-  const { data: items, httpConfig } = useFetch(url);
-
-  // 1- Resgatando dados da API
-  const getData = useCallback(async () => {
-    const res = await fetch(url);
-    const data = await res.json();
-    setProducts(data);
-  }, []);
-
-  // Adicionando Itens na lista de produtos
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const name = e.target.name.value;
-    const price = e.target.price.value;
-
-    const product = {
-      name,
-      price,
-    };
-
-    addProduct(product);
-  }
+  const { data: items, httpConfig, loading, errors } = useFetch(url);
 
   const addProduct = async (product) => {
     httpConfig(product, "POST");
     setName("");
     setPrice("");
   };
+  //Função para adicionar produto
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (name.trim() === "" || price.trim() === "") {
+      return;
+    } else {
+      const product = {
+        name,
+        price,
+      };
+      // 'void' indica explicitamente que a Promise da função async não precisa ser aguardada aqui
+      void addProduct(product);
+    }
+  }
+  //Funcção de remover
+  function handleRemoveProduct(id) {
+    httpConfig(id, "DELETE");
+  }
+
   //Função para adicionar produto
   function handleSubmit(e) {
     e.preventDefault();
