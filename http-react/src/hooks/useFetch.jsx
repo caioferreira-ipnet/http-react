@@ -17,9 +17,10 @@ export const useFetch = (url) => {
 
   //Tratando erros
   const [errors, setErrors] = useState(null);
-
+  const [itemsId, setItemsId] = useState(null);
   const [data, setData] = useState(null);
 
+  //Configurar POST/Requisições gerais
   const httpConfig = (data, method) => {
     if (method === "POST") {
       setConfig({
@@ -30,9 +31,19 @@ export const useFetch = (url) => {
         body: JSON.stringify(data),
       });
       setMethod(method);
+    } else if (method === "DELETE") {
+      setConfig({
+        method,
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      setMethod(method);
+      setItemsId(data);
     }
   };
 
+  //Method GET
   useEffect(() => {
     void (async () => {
       try {
@@ -49,6 +60,7 @@ export const useFetch = (url) => {
     })();
   }, [url, callFetch]);
 
+  //Method POST
   useEffect(() => {
     if (method === "POST") {
       void (async () => {
@@ -60,7 +72,14 @@ export const useFetch = (url) => {
           console.error("Error posting data:", error);
         }
       })();
+    } else if (method === "DELETE") {
+      void (async () => {
+        const deleteUrl = `${url}/${itemsId}`;
+        const res = await fetch(deleteUrl, config);
+        const json = await res.json();
+        setCallFetch(json);
+      })();
     }
-  }, [config, method, url]);
+  }, [config, method, url, itemsId]);
   return { data, httpConfig, loading, errors };
 };
